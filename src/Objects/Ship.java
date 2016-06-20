@@ -39,7 +39,7 @@ public class Ship extends GameObject {
         switch (shipType) {
             case TYPE_U: {
 
-                getPosition().add(getPosition().getY() > 400 && getPosition().getY() < 1000 ? 1 * variation : 0, 4);
+                getPosition().add(getPosition().getY() > 400 && getPosition().getY() < 900 ? 1 * variation : 0, 4);
                 if (age % 40 == 15) {
                     gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(0, 5), Missile.MissileType.FIREBALL, Math.PI / 2));
                 }
@@ -70,6 +70,24 @@ public class Ship extends GameObject {
                 }
             }
             break;
+            case TYPE_V: {
+                getPosition().add(variation * age * .01, 10);
+            }
+            break;
+            case TYPE_K: {
+                getPosition().add(0, 2);
+                if (age % 25 == 0 && (age / 25) % 10 < 6) {
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(0, 0), Missile.MissileType.FIREBALL, getPosition().directionTo(gameMap.getRaptor().getPosition())));
+                }
+            }
+            break;
+            case TYPE_H: {
+                getPosition().add(variation * 8, 16);
+                if (age % 60 == 15) {
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(0, 5), Missile.MissileType.FIREBALL, Math.PI / 2));
+                }
+            }
+            break;
             default:
                 throw new AssertionError();
         }
@@ -94,9 +112,11 @@ public class Ship extends GameObject {
     }
 
     public enum ShipType {
-
-        TYPE_U(40, 25),
-        TYPE_X(20, 15);
+        TYPE_U(20, 25),
+        TYPE_V(15, 25),
+        TYPE_X(10, 15),
+        TYPE_K(85, 30),
+        TYPE_H(7, 20),;
 
         private ShipType(double hp, double radius) {
             this.hp = hp;
@@ -116,8 +136,9 @@ public class Ship extends GameObject {
 
         @Override
         public String toString() {
-            return "ShipType{" + '}';
+            return "ShipType{" + this.name() + '}';
         }
+
     }
 
     @Override

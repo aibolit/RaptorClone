@@ -12,6 +12,7 @@ import Engine.GameMapImpl;
 import Objects.ControlType;
 import Objects.Explosion;
 import Objects.GameObject;
+import Objects.MapBounds;
 import Objects.Missile;
 import Objects.Point;
 import Objects.Raptor;
@@ -57,6 +58,7 @@ public class RaptorUi extends javax.swing.JFrame {
     private Set<Star> stars = new HashSet<>();
     private final Random random = new Random();
     private final Map<Long, List<ExplosionParticle>> explosions = new HashMap<>();
+    private final MapBounds mapBounds = new MapBounds(0, 1200, 0, 1600);
 
     /**
      * Creates new form RaptorUi
@@ -109,8 +111,8 @@ public class RaptorUi extends javax.swing.JFrame {
     private void initArt() {
         for (int i = 0; i < 100; i++) {
             stars.add(new Star(random.nextDouble() * 5, new Point(
-                    GameMapImpl.MIN_X + random.nextDouble() * GameMapImpl.MAX_X,
-                    GameMapImpl.MIN_Y + random.nextDouble() * GameMapImpl.MAX_Y)));
+                    mapBounds.getMinX() + random.nextDouble() * mapBounds.getMaxX(),
+                    mapBounds.getMinY() + random.nextDouble() * mapBounds.getMaxY())));
         }
     }
 
@@ -120,7 +122,7 @@ public class RaptorUi extends javax.swing.JFrame {
 
         if (gameStatus.getTick() != lastTick) {
             if (random.nextInt(10) == 0) {
-                stars.add(new Star(random.nextDouble() * 5, new Point(GameMapImpl.MIN_X + random.nextDouble() * (GameMapImpl.MAX_X + 2 * GameMapImpl.MAP_BOUNDS_PADDING) - GameMapImpl.MAP_BOUNDS_PADDING, GameMapImpl.MIN_Y - GameMapImpl.MAP_BOUNDS_PADDING)));
+                stars.add(new Star(random.nextDouble() * 5, new Point(mapBounds.getMinX() + random.nextDouble() * (mapBounds.getMaxX() + 2 * GameMapImpl.MAP_BOUNDS_PADDING) - GameMapImpl.MAP_BOUNDS_PADDING, mapBounds.getMinY() - GameMapImpl.MAP_BOUNDS_PADDING)));
             }
 
             for (long i = lastTick; i < gameStatus.getTick(); i++) {
@@ -177,7 +179,25 @@ public class RaptorUi extends javax.swing.JFrame {
                     }
                     break;
                     case TYPE_X: {
-                        Image i = Configurations.getPlayerImage(2);
+                        Image i = Configurations.getPlayerImage(15);
+                        int width = 60, height = 50;
+                        cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
+                    }
+                    break;
+                    case TYPE_V: {
+                        Image i = Configurations.getPlayerImage(23);
+                        int width = 60, height = 50;
+                        cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
+                    }
+                    break;
+                    case TYPE_K: {
+                        Image i = Configurations.getPlayerImage(8);
+                        int width = 60, height = 50;
+                        cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
+                    }
+                    break;
+                    case TYPE_H: {
+                        Image i = Configurations.getPlayerImage(17);
                         int width = 60, height = 50;
                         cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
                     }

@@ -36,6 +36,9 @@ public class Swarm {
     private final long creationTick;
     private boolean done = false;
 
+    //private vars
+    private Integer swarmInt = null;
+
     public static Swarm random(long tick) {
         return new Swarm(SwarmType.values()[(int) (Math.random() * SwarmType.values().length)], tick);
     }
@@ -48,7 +51,7 @@ public class Swarm {
     public void nextRound(GameMap gameMap) {
         long age = gameMap.getTick() - creationTick;
         switch (swarmType) {
-            case X:
+            case X_0: {
                 if (age == 5) {
                     gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(3), Ship.ShipType.TYPE_X, 5));
                     gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(8), Ship.ShipType.TYPE_X, 5));
@@ -59,8 +62,9 @@ public class Swarm {
 
                     done = true;
                 }
-                break;
-            case U_3:
+            }
+            break;
+            case U_1: {
                 if (age == 5) {
                     gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(2), Ship.ShipType.TYPE_U, 1));
 
@@ -73,14 +77,79 @@ public class Swarm {
 
                     done = true;
                 }
-                break;
-            case U_0:
-                if (age == 5) {
-                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(2), Ship.ShipType.TYPE_U, 0));
-
+            }
+            break;
+            case U_0: {
+                if (age == 0 || age == 110 || age == 220) {
+                    swarmInt = (int) (Math.random() * 4);
+                }
+                if (age == 0 || age == 30 || age == 60) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(8 + swarmInt), Ship.ShipType.TYPE_U, 0));
+                }
+                if (age == 110 || age == 140 || age == 170) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(0 + swarmInt), Ship.ShipType.TYPE_U, 0));
+                }
+                if (age == 220 || age == 250 || age == 280) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(4 + swarmInt), Ship.ShipType.TYPE_U, 0));
+                }
+                if (age == 345) {
                     done = true;
                 }
-                break;
+            }
+            break;
+
+            case V_0: {
+                if (age == 0) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(11), Ship.ShipType.TYPE_V, -2));
+                }
+                if (age == 20) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(11), Ship.ShipType.TYPE_V, -4));
+                }
+                if (age == 40) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(11), Ship.ShipType.TYPE_V, -6));
+                }
+                if (age == 100) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(0), Ship.ShipType.TYPE_V, 2));
+                }
+                if (age == 120) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(0), Ship.ShipType.TYPE_V, 4));
+                }
+                if (age == 140) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(0), Ship.ShipType.TYPE_V, 6));
+                }
+                if (age == 200) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(6), Ship.ShipType.TYPE_V, -1));
+                }
+                if (age == 220) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(6), Ship.ShipType.TYPE_V, 2));
+                }
+                if (age == 240) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(6), Ship.ShipType.TYPE_V, -3));
+                }
+            }
+            break;
+
+            case K_0: {
+                if (age == 0 || age == 150) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation((int) (Math.random() * 12)), Ship.ShipType.TYPE_K, 0));
+                }
+                if (age == 150) {
+                    done = true;
+                }
+            }
+            break;
+            case H_0: {
+                if (age == 0 || age == 80 || age == 160) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(0), Ship.ShipType.TYPE_H, 1));
+                }
+                if (age == 40 || age == 120 || age == 200) {
+                    gameMap.addShip(new Ship(gameMap.getTick(), gameMap.getSpawnLocation(11), Ship.ShipType.TYPE_H, -1));
+                }
+                if (age == 200) {
+                    done = true;
+                }
+            }
+            break;
             default:
                 throw new AssertionError();
         }
@@ -93,8 +162,11 @@ public class Swarm {
 
     public enum SwarmType {
         U_0,
-        U_3,
-        X
+        U_1,
+        X_0,
+        V_0,
+        K_0,
+        H_0,
     }
 
 }

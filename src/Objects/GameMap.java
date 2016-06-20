@@ -37,4 +37,8 @@ public interface GameMap {
     public Point getRandomLocation(int rows, int cols);
 
     public void addShip(Ship ship);
+
+    public Raptor getRaptor();
+
+    public MapBounds getMapBounds();
 }

@@ -86,15 +86,15 @@ public class Raptor extends GameObject {
 
                     double spread = controls.contains(ControlType.LEFT) ^ controls.contains(ControlType.RIGHT) ? 0 : 5;
 
-                    if (tick % 5 == 0) {
+                    if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) >= 1 && tick % (5 * (RaptorSubsystem.WEAPONS_SPEED.getMaxLevel() + 1 - getSubsystemLevel(RaptorSubsystem.WEAPONS_SPEED))) == 0) {
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(10 + spread, -2), Missile.MissileType.BULLET, -Math.PI / 2));
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(-10 - spread, -2), Missile.MissileType.BULLET, -Math.PI / 2));
                     }
-                    if (tick % 37 == 0) {
+                    if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) >= 3 && tick % (37 * (RaptorSubsystem.WEAPONS_SPEED.getMaxLevel() + 1 - getSubsystemLevel(RaptorSubsystem.WEAPONS_SPEED))) == 0) {
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(5 + spread, -4), Missile.MissileType.DUMBFIRE_MISSILE, Math.PI * 3 / 8));
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(-5 - spread, -4), Missile.MissileType.DUMBFIRE_MISSILE, Math.PI * 5 / 8));
                     }
-                    if (tick % 17 == 0) {
+                    if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) >= 2 && tick % (17 * (RaptorSubsystem.WEAPONS_SPEED.getMaxLevel() + 1 - getSubsystemLevel(RaptorSubsystem.WEAPONS_SPEED))) == 0) {
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(18 + spread, -2.5), Missile.MissileType.MICRO_MISSILE, -Math.PI / 2));
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(-18 - spread, -2.5), Missile.MissileType.MICRO_MISSILE, -Math.PI / 2));
                     }
@@ -138,6 +138,39 @@ public class Raptor extends GameObject {
             verticalSkid = vmove;
 
             getPosition().add(hmove, vmove);
+
+            if (getPosition().getX() < gameMap.getMapBounds().getMinX()) {
+                getPosition().setX(
+                        getSubsystemLevel(RaptorSubsystem.MOVE_BRAKE) >= RaptorSubsystem.MOVE_BRAKE.getMaxLevel()
+                        ? gameMap.getMapBounds().getMinX()
+                        : 2 * gameMap.getMapBounds().getMinX() - getPosition().getX());
+                horizontalSkid = -horizontalSkid;
+            }
+
+            if (getPosition().getX() > gameMap.getMapBounds().getMaxX()) {
+                getPosition().setX(
+                        getSubsystemLevel(RaptorSubsystem.MOVE_BRAKE) >= RaptorSubsystem.MOVE_BRAKE.getMaxLevel()
+                        ? gameMap.getMapBounds().getMaxX()
+                        : 2 * gameMap.getMapBounds().getMaxX() - getPosition().getX());
+                horizontalSkid = -horizontalSkid;
+            }
+
+            if (getPosition().getY() < gameMap.getMapBounds().getMinY()) {
+                getPosition().setY(
+                        getSubsystemLevel(RaptorSubsystem.MOVE_BRAKE) >= RaptorSubsystem.MOVE_BRAKE.getMaxLevel()
+                        ? gameMap.getMapBounds().getMinY()
+                        : 2 * gameMap.getMapBounds().getMinY() - getPosition().getY());
+                verticalSkid = -verticalSkid;
+            }
+
+            if (getPosition().getY() > gameMap.getMapBounds().getMaxY()) {
+                getPosition().setY(
+                        getSubsystemLevel(RaptorSubsystem.MOVE_BRAKE) >= RaptorSubsystem.MOVE_BRAKE.getMaxLevel()
+                        ? gameMap.getMapBounds().getMaxY()
+                        : 2 * gameMap.getMapBounds().getMaxY() - getPosition().getY());
+                verticalSkid = -verticalSkid;
+            }
+
         }
         shield = Math.min(shield + SHEILD_REGEN * Math.pow(getSubsystemRatio(RaptorSubsystem.HULL_SHEILD), 2), 1);
     }

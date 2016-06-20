@@ -6,6 +6,7 @@ import Objects.ControlType;
 import Objects.Explosion;
 import Objects.GameMap;
 import Objects.GameObject;
+import Objects.MapBounds;
 import Objects.Missile;
 import Objects.Point;
 import Objects.Raptor;
@@ -27,7 +28,8 @@ import java.util.Set;
  */
 public class GameMapImpl implements Serializable, GameMap {
 
-    public final static double MAX_X = 1200, MIN_X = 0, MAX_Y = 1600, MIN_Y = 0;
+    //public final static double MAX_X = 1200, MIN_X = 0, MAX_Y = 1600, MIN_Y = 0;
+    private final MapBounds mapBounds = new MapBounds(0, 1200, 0, 1600);
     public final static double MAP_BOUNDS_PADDING = 50;
 
     private volatile GameStatus gameStatus = GameStatus.RUNNING;
@@ -184,7 +186,7 @@ public class GameMapImpl implements Serializable, GameMap {
     }
 
     public Point getSpawnLocation(int idx) {
-        return new Point(MIN_X + (MAX_X - MIN_X) / 24.0 * (2 * idx + 1), MIN_Y - MAP_BOUNDS_PADDING);
+        return new Point(mapBounds.getMinX() + (mapBounds.getMaxX() - mapBounds.getMinX()) / 24.0 * (2 * idx + 1), mapBounds.getMinY() - MAP_BOUNDS_PADDING);
     }
 
     public synchronized void addShip(Ship ship) {
@@ -199,10 +201,10 @@ public class GameMapImpl implements Serializable, GameMap {
     private boolean isOutOfBounds(Point point, boolean addPadding) {
         double buffer = addPadding ? MAP_BOUNDS_PADDING : 0;
 
-        return point.getX() < MIN_X - buffer
-                || point.getX() > MAX_X + buffer
-                || point.getY() < MIN_Y - buffer
-                || point.getY() > MAX_Y + buffer;
+        return point.getX() < mapBounds.getMinX() - buffer
+                || point.getX() > mapBounds.getMaxX() + buffer
+                || point.getY() < mapBounds.getMinY() - buffer
+                || point.getY() > mapBounds.getMaxY() + buffer;
     }
 
     @Override
@@ -227,13 +229,24 @@ public class GameMapImpl implements Serializable, GameMap {
         return stat;
     }
 
+    @Override
+    public Raptor getRaptor() {
+        return raptor;
+    }
+
+    @Override
+    public MapBounds getMapBounds() {
+        return mapBounds;
+    }
+
     public enum GameStatus {
         RUNNING, PAUSED, GAME_OVER
     }
 
     @Override
     public Point getRandomLocation(int rows, int cols) {
-        return new Point(MIN_X + (random.nextInt(cols) + .5) * (MAX_X - MIN_X) / cols, MIN_Y + (random.nextInt(rows) + .5) * (MAX_Y - MIN_Y) / rows);
+        return new Point(mapBounds.getMinX() + (random.nextInt(cols) + .5) * (mapBounds.getMaxX() - mapBounds.getMinX()) / cols,
+                mapBounds.getMinY() + (random.nextInt(rows) + .5) * (mapBounds.getMaxY() - mapBounds.getMinY()) / rows);
     }
 
 }
