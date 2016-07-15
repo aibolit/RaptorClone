@@ -14,9 +14,18 @@ import Objects.Explosion;
 import Objects.GameObject;
 import Objects.MapBounds;
 import Objects.Missile;
+import static Objects.Missile.MissileType.BULLET;
+import static Objects.Missile.MissileType.DUMBFIRE_MISSILE;
+import static Objects.Missile.MissileType.FIREBALL;
+import static Objects.Missile.MissileType.MICRO_MISSILE;
 import Objects.Point;
 import Objects.Raptor;
 import Objects.Ship;
+import static Objects.Ship.ShipType.TYPE_H;
+import static Objects.Ship.ShipType.TYPE_K;
+import static Objects.Ship.ShipType.TYPE_U;
+import static Objects.Ship.ShipType.TYPE_V;
+import static Objects.Ship.ShipType.TYPE_X;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -63,10 +72,14 @@ public class RaptorUi extends javax.swing.JFrame {
     /**
      * Creates new form RaptorUi
      */
+//    public RaptorUi() {
+//        initComponents();
+//        initArt();
+//        initConnection();
+//    }
     public RaptorUi() {
         initComponents();
         initArt();
-        initConnection();
     }
 
     private void initConnection() {
@@ -108,6 +121,46 @@ public class RaptorUi extends javax.swing.JFrame {
         }, "Client-Connection").start();
     }
 
+    public void setGameStatus(GameStatusMessage gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
+    public void connectStreams(ObjectInputStream ois, ObjectOutputStream oos) {
+        clientOutput = oos;
+    }
+
+    private void initConnection(ObjectInputStream ois, ObjectOutputStream oos) {
+        new Thread(() -> {
+            boolean inited = false;
+
+            clientOutput = oos;
+            Object o;
+            try {
+                while ((o = ois.readObject()) != null) {
+                    if (o instanceof GameStatusMessage) {
+                        gameStatus = (GameStatusMessage) o;
+                        if (!inited) {
+                            new Thread(() -> {
+                                while (true) {
+                                    drawFrame();
+                                }
+                            }, "Client-FrameBuffer").start();
+                            inited = true;
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                System.exit(0);
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+                ex.getCause();
+            }
+
+        }, "Client-Connection").start();
+
+    }
+
     private void initArt() {
         for (int i = 0; i < 100; i++) {
             stars.add(new Star(random.nextDouble() * 5, new Point(
@@ -116,7 +169,7 @@ public class RaptorUi extends javax.swing.JFrame {
         }
     }
 
-    private void drawFrame() {
+    public void drawFrame() {
         GameStatusMessage status = gameStatus;
         //System.out.println("B" + gameStatus);
 
@@ -478,6 +531,7 @@ public class RaptorUi extends javax.swing.JFrame {
                 break;
             default:
                 break;
+
         }
     }//GEN-LAST:event_formKeyReleased
 
@@ -551,16 +605,24 @@ public class RaptorUi extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RaptorUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RaptorUi.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RaptorUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RaptorUi.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RaptorUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RaptorUi.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RaptorUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RaptorUi.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 

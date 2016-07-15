@@ -5,7 +5,7 @@
  */
 package raptorclone;
 
-import GUI.RaptorUi;
+import GUI.LaunchUi;
 import Server.RaptorCloneServer;
 import java.io.IOException;
 
@@ -15,21 +15,30 @@ import java.io.IOException;
  */
 public class RaptorClone {
 
+    private static void startServer() {
+        new Thread(new RaptorCloneServer(), "Server-Master").start();
+    }
+
+    private static void startClient() {
+        LaunchUi.main(new String[0]);
+    }
+
     public static void main(String[] args) throws InterruptedException {
         System.setProperty("sun.java2d.opengl", "true");
         try {
             Configurations.readCongfigs("settings.cfg");
+            Configurations.readCongfigs("private.cfg");
         } catch (IOException ex) {
             System.out.println("Warning: Could not read configuration file; reverting to defaults");
         }
         if (args.length > 0 && args[0].equals("client")) {
-            RaptorUi.main(args);
+            startClient();
         } else if (args.length > 0 && args[0].equals("local")) {
-            new Thread(new RaptorCloneServer(), "Server-Master").start();
+            startServer();
             Thread.sleep(1000);
-            RaptorUi.main(args);
+            startClient();
         } else {
-            new Thread(new RaptorCloneServer(), "Server-Master").start();
+            startServer();
         }
 
     }

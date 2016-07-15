@@ -30,7 +30,7 @@ public class Raptor extends GameObject {
         this.subsystems.putAll(subsystems);
 
         for (RaptorSubsystem subsystem : RaptorSubsystem.values()) {
-            this.subsystems.put(subsystem, 2);
+            this.subsystems.put(subsystem, 3);
         }
 
         this.hp = 1 + getSubsystemLevel(RaptorSubsystem.HULL_HEALTH);
