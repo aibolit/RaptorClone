@@ -35,6 +35,7 @@ import raptorclone.Configurations;
 public class RaptorCloneServer implements Runnable {
 
     private static final Map<String, Raptor.RaptorSubsystem> subsystemCodesMap = new HashMap<>();
+    private int nextClientId = 0;
 
     static {
         subsystemCodesMap.put("r1c1p1", Raptor.RaptorSubsystem.MOVE_HORIZONTAL);
@@ -60,17 +61,14 @@ public class RaptorCloneServer implements Runnable {
         subsystemCodesMap.put("r3c1p1", Raptor.RaptorSubsystem.WEAPON_TYPES);
         subsystemCodesMap.put("r3c1p2", Raptor.RaptorSubsystem.WEAPON_TYPES);
         subsystemCodesMap.put("r3c1p3", Raptor.RaptorSubsystem.WEAPON_TYPES);
-        subsystemCodesMap.put("r3c2p1", Raptor.RaptorSubsystem.WEAPONS_SPEED);
-        subsystemCodesMap.put("r3c2p2", Raptor.RaptorSubsystem.WEAPONS_SPEED);
-        subsystemCodesMap.put("r3c2p3", Raptor.RaptorSubsystem.WEAPONS_SPEED);
+        subsystemCodesMap.put("r3c2p1", Raptor.RaptorSubsystem.WEAPON_SPEED);
+        subsystemCodesMap.put("r3c2p2", Raptor.RaptorSubsystem.WEAPON_SPEED);
+        subsystemCodesMap.put("r3c2p3", Raptor.RaptorSubsystem.WEAPON_SPEED);
         subsystemCodesMap.put("r3c3p1", Raptor.RaptorSubsystem.WEAPON_POWER);
         subsystemCodesMap.put("r3c3p2", Raptor.RaptorSubsystem.WEAPON_POWER);
         subsystemCodesMap.put("r3c3p3", Raptor.RaptorSubsystem.WEAPON_POWER);
         subsystemCodesMap.put("r3meta", Raptor.RaptorSubsystem.WEAPON_SYSTEM);
-
     }
-
-    private int nextClientId = 0;
 
     private Map<Raptor.RaptorSubsystem, Integer> verifyLogin(LoginMessage loginMessage) {
         try {

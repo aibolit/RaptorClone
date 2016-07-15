@@ -19,22 +19,17 @@ public class Raptor extends GameObject {
     private final Map<RaptorSubsystem, Integer> subsystems = new EnumMap<>(RaptorSubsystem.class);
 
     private int hp;
-    private double shield = 1;
+    private double shield;
 
     private final double SPEED = 8, SHEILD_REGEN = 0.01;
-
     private double horizontalSkid = 0, verticalSkid = 0;
 
     public Raptor(Point position, Map<RaptorSubsystem, Integer> subsystems) {
         super(0, position, 15);
         this.subsystems.putAll(subsystems);
 
-        for (RaptorSubsystem subsystem : RaptorSubsystem.values()) {
-            this.subsystems.put(subsystem, 3);
-        }
-
         this.hp = 1 + getSubsystemLevel(RaptorSubsystem.HULL_HEALTH);
-
+        this.shield = getSubsystemLevel(RaptorSubsystem.HULL_SHEILD) > 0 ? 1 : 0;
         //CUSTOM
     }
 
@@ -86,15 +81,15 @@ public class Raptor extends GameObject {
 
                     double spread = controls.contains(ControlType.LEFT) ^ controls.contains(ControlType.RIGHT) ? 0 : 5;
 
-                    if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) >= 1 && tick % (5 * (RaptorSubsystem.WEAPONS_SPEED.getMaxLevel() + 1 - getSubsystemLevel(RaptorSubsystem.WEAPONS_SPEED))) == 0) {
+                    if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) >= 1 && tick % (5 * (RaptorSubsystem.WEAPON_SPEED.getMaxLevel() + 1 - getSubsystemLevel(RaptorSubsystem.WEAPON_SPEED))) == 0) {
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(10 + spread, -2), Missile.MissileType.BULLET, -Math.PI / 2));
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(-10 - spread, -2), Missile.MissileType.BULLET, -Math.PI / 2));
                     }
-                    if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) >= 3 && tick % (37 * (RaptorSubsystem.WEAPONS_SPEED.getMaxLevel() + 1 - getSubsystemLevel(RaptorSubsystem.WEAPONS_SPEED))) == 0) {
+                    if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) >= 3 && tick % (37 * (RaptorSubsystem.WEAPON_SPEED.getMaxLevel() + 1 - getSubsystemLevel(RaptorSubsystem.WEAPON_SPEED))) == 0) {
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(5 + spread, -4), Missile.MissileType.DUMBFIRE_MISSILE, Math.PI * 3 / 8));
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(-5 - spread, -4), Missile.MissileType.DUMBFIRE_MISSILE, Math.PI * 5 / 8));
                     }
-                    if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) >= 2 && tick % (17 * (RaptorSubsystem.WEAPONS_SPEED.getMaxLevel() + 1 - getSubsystemLevel(RaptorSubsystem.WEAPONS_SPEED))) == 0) {
+                    if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) >= 2 && tick % (17 * (RaptorSubsystem.WEAPON_SPEED.getMaxLevel() + 1 - getSubsystemLevel(RaptorSubsystem.WEAPON_SPEED))) == 0) {
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(18 + spread, -2.5), Missile.MissileType.MICRO_MISSILE, -Math.PI / 2));
                         gameMap.addMissile(new Missile(tick, new Point(getPosition()).add(-18 - spread, -2.5), Missile.MissileType.MICRO_MISSILE, -Math.PI / 2));
                     }
@@ -170,7 +165,6 @@ public class Raptor extends GameObject {
                         : 2 * gameMap.getMapBounds().getMaxY() - getPosition().getY());
                 verticalSkid = -verticalSkid;
             }
-
         }
         shield = Math.min(shield + SHEILD_REGEN * Math.pow(getSubsystemRatio(RaptorSubsystem.HULL_SHEILD), 2), 1);
     }
@@ -181,16 +175,33 @@ public class Raptor extends GameObject {
     }
 
     public enum RaptorSubsystem {
-        MOVE_HORIZONTAL(3), MOVE_VERTICAL(3), MOVE_BRAKE(3), MOVE_SYSTEM(1), WEAPON_TYPES(3), WEAPONS_SPEED(3), WEAPON_POWER(3), WEAPON_SYSTEM(1), HULL_HEALTH(3), HULL_SHEILD(3), HULL_RADAR(3), HULL_SYSTEM(1);
+        MOVE_HORIZONTAL(3, false),
+        MOVE_VERTICAL(3, false),
+        MOVE_BRAKE(3, false),
+        MOVE_SYSTEM(1, true),
+        WEAPON_TYPES(3, false),
+        WEAPON_SPEED(3, false),
+        WEAPON_POWER(3, false),
+        WEAPON_SYSTEM(1, true),
+        HULL_HEALTH(3, false),
+        HULL_SHEILD(3, false),
+        HULL_RADAR(3, false),
+        HULL_SYSTEM(1, true);
 
-        private RaptorSubsystem(int maxLevel) {
+        private RaptorSubsystem(int maxLevel, boolean isSystem) {
             this.maxLevel = maxLevel;
+            this.system = isSystem;
         }
 
         public int getMaxLevel() {
             return maxLevel;
         }
 
+        public boolean isSystem() {
+            return system;
+        }
+
         private final int maxLevel;
+        private final boolean system;
     }
 }

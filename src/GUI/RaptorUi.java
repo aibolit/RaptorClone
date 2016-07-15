@@ -385,16 +385,18 @@ public class RaptorUi extends javax.swing.JFrame {
                 cg.drawImage(img, 40 + 35 * i, 40, width, height, null);
             }
 
-            cg.setColor(new Color(8, 182, 180, 100));
-            cg.fillRect(40, 80, 200, 30);
+            if (raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_SHEILD) > 0) {
+                cg.setColor(new Color(8, 182, 180, 100));
+                cg.fillRect(40, 80, 200, 30);
 
-            cg.setColor(new Color(8, 182, 180));
-            cg.fillRect(40, 80, (int) (200 * raptor.getShield()), 30);
+                cg.setColor(new Color(8, 182, 180));
+                cg.fillRect(40, 80, (int) (200 * raptor.getShield()), 30);
 
-            if (raptor.getShield() >= 1) {
-                cg.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                cg.setColor(Color.WHITE);
-                cg.drawRect(40, 80, (int) (200 * raptor.getShield()), 30);
+                if (raptor.getShield() >= 1) {
+                    cg.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                    cg.setColor(Color.WHITE);
+                    cg.drawRect(40, 80, (int) (200 * raptor.getShield()), 30);
+                }
             }
         }
 

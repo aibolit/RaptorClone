@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -55,6 +56,9 @@ public class GameMapImpl implements Serializable, GameMap {
     public synchronized void registerControlMessage(ControlMessage controlMessage) {
         switch (controlMessage.getControl()) {
             case PAUSE:
+                if (gameStatus == GameStatus.GAME_OVER) {
+                    break;
+                }
                 if (gameStatus != GameStatus.PAUSED) {
                     gameStatus = GameStatus.PAUSED;
                 } else {
@@ -69,7 +73,6 @@ public class GameMapImpl implements Serializable, GameMap {
                 }
                 break;
         }
-
     }
 
     @Override
@@ -118,7 +121,7 @@ public class GameMapImpl implements Serializable, GameMap {
                 if (ship.overlapsWith(missile)) {
                     explosions.add(missile.getExplosion(this));
                     removeMissiles.add(missile);
-                    if (!ship.modifyHp(-missile.getDamage())) {
+                    if (!ship.modifyHp(-missile.getDamage() * Math.pow(2, raptor.getSubsystemLevel(Raptor.RaptorSubsystem.WEAPON_POWER) - Raptor.RaptorSubsystem.WEAPON_POWER.getMaxLevel()))) {
                         removeShips.add(ship);
                         break;
                     }
@@ -223,9 +226,20 @@ public class GameMapImpl implements Serializable, GameMap {
 
         List<GameObject> gameObects = new ArrayList<>();
         gameObects.add(raptor);
+
         gameObects.addAll(ships);
         gameObects.addAll(missiles);
         gameObects.addAll(explosions);
+
+        if (raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR) != Raptor.RaptorSubsystem.HULL_RADAR.getMaxLevel()) {
+            int ticksLen = 300;
+            double ratio = Math.pow(2.0, raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR) - Raptor.RaptorSubsystem.HULL_RADAR.getMaxLevel());
+            //1.0 * (1 + raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR)) / (1 + Raptor.RaptorSubsystem.HULL_RADAR.getMaxLevel());
+            gameObects = gameObects.stream().filter((o) -> {
+                return (tick + o.hashCode()) % ticksLen < ((int) ticksLen * ratio) || o.equals(raptor);
+            }).collect(Collectors.toList());
+        }
+
         GameStatusMessage stat = new GameStatusMessage(tick, gameObects, gameStatus);
         return stat;
     }

@@ -24,7 +24,6 @@ public class Explosion extends GameObject {
 
     @Override
     public void nextRound(GameMap gameMap) {
-
     }
 
     public Double getDirection() {

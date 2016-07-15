@@ -78,14 +78,6 @@ public class Missile extends GameObject {
             this.damage = 0;
         }
 
-        private MissileType(boolean friendly, double speed, double radius, Point acceleration) {
-            this.friendly = friendly;
-            this.speed = speed;
-            this.radius = radius;
-            this.acceleration = new Point(acceleration);
-            this.damage = 0;
-        }
-
         private MissileType(boolean friendly, double speed, double radius, double damage) {
             this.friendly = friendly;
             this.speed = speed;

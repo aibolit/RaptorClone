@@ -138,7 +138,6 @@ public class Ship extends GameObject {
         public String toString() {
             return "ShipType{" + this.name() + '}';
         }
-
     }
 
     @Override
