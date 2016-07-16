@@ -28,6 +28,7 @@ import CommObjects.GameStatusMessage;
 import CommObjects.LoginMessage;
 import CommObjects.UserStatsMessage;
 import Objects.ControlType;
+import Objects.GameStatus;
 import Objects.Raptor;
 import java.awt.Color;
 import java.io.IOException;
@@ -450,12 +451,16 @@ public class LaunchUi extends javax.swing.JFrame {
                         launchGameButton.setEnabled(true);
                     });
 
+                    boolean isGameOver = false;
                     boolean inited = false;
                     Object o;
                     try {
                         while ((o = ois.readObject()) != null) {
                             if (o instanceof GameStatusMessage) {
                                 raptorUi.setGameStatus((GameStatusMessage) o);
+                                if (((GameStatusMessage) o).getGameStatus() == GameStatus.GAME_OVER) {
+                                    isGameOver = true;
+                                }
                                 if (!inited) {
                                     new Thread(() -> {
                                         while (true) {
@@ -468,7 +473,9 @@ public class LaunchUi extends javax.swing.JFrame {
                         }
                     } catch (IOException ex) {
                         ex.printStackTrace();
-                        System.exit(0);
+                        if (!isGameOver) {
+                            System.exit(0);
+                        }
                     } catch (ClassNotFoundException ex) {
                         ex.printStackTrace();
                         ex.getCause();

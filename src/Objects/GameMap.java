@@ -7,7 +7,6 @@ package Objects;
 
 import CommObjects.ControlMessage;
 import CommObjects.GameStatusMessage;
-import Engine.GameMapImpl;
 import java.util.Set;
 
 /**
@@ -26,7 +25,7 @@ public interface GameMap {
 
     public void addExplosion(Explosion explosion);
 
-    public GameMapImpl.GameStatus getGameStatus();
+    public GameStatus getGameStatus();
 
     public void addMissile(Missile missile);
 
@@ -41,4 +40,6 @@ public interface GameMap {
     public Raptor getRaptor();
 
     public MapBounds getMapBounds();
+
+    public Long getGameOverTick();
 }

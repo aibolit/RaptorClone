@@ -12,6 +12,7 @@ import Engine.GameMapImpl;
 import Objects.ControlType;
 import Objects.Explosion;
 import Objects.GameObject;
+import Objects.GameStatus;
 import Objects.MapBounds;
 import Objects.Missile;
 import static Objects.Missile.MissileType.BULLET;
@@ -41,7 +42,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,83 +82,12 @@ public class RaptorUi extends javax.swing.JFrame {
         initArt();
     }
 
-    private void initConnection() {
-        new Thread(() -> {
-            boolean inited = false;
-            try {
-                final Socket socket = new Socket(Configurations.getHost(), Configurations.getPort());
-
-                try (final ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                        final ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
-
-                    clientOutput = oos;
-                    Object o;
-                    try {
-                        while ((o = ois.readObject()) != null) {
-                            if (o instanceof GameStatusMessage) {
-                                gameStatus = (GameStatusMessage) o;
-                                if (!inited) {
-                                    new Thread(() -> {
-                                        while (true) {
-                                            drawFrame();
-                                        }
-                                    }, "Client-FrameBuffer").start();
-                                    inited = true;
-                                }
-                            }
-                        }
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                        System.exit(0);
-                    } catch (ClassNotFoundException ex) {
-                        ex.printStackTrace();
-                        ex.getCause();
-                    }
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }, "Client-Connection").start();
-    }
-
     public void setGameStatus(GameStatusMessage gameStatus) {
         this.gameStatus = gameStatus;
     }
 
     public void connectStreams(ObjectInputStream ois, ObjectOutputStream oos) {
         clientOutput = oos;
-    }
-
-    private void initConnection(ObjectInputStream ois, ObjectOutputStream oos) {
-        new Thread(() -> {
-            boolean inited = false;
-
-            clientOutput = oos;
-            Object o;
-            try {
-                while ((o = ois.readObject()) != null) {
-                    if (o instanceof GameStatusMessage) {
-                        gameStatus = (GameStatusMessage) o;
-                        if (!inited) {
-                            new Thread(() -> {
-                                while (true) {
-                                    drawFrame();
-                                }
-                            }, "Client-FrameBuffer").start();
-                            inited = true;
-                        }
-                    }
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                System.exit(0);
-            } catch (ClassNotFoundException ex) {
-                ex.printStackTrace();
-                ex.getCause();
-            }
-
-        }, "Client-Connection").start();
-
     }
 
     private void initArt() {
@@ -401,12 +330,12 @@ public class RaptorUi extends javax.swing.JFrame {
         }
 
         //OVERLAY TEXT
-        if (gameStatus.getGameStatus() == GameMapImpl.GameStatus.PAUSED) {
+        if (gameStatus.getGameStatus() == GameStatus.PAUSED) {
             cg.setColor(Color.ORANGE);
             cg.setFont(new Font("Monospaced", Font.PLAIN, 108));
             Rectangle2D b = cg.getFontMetrics().getStringBounds("Paused", cg);
             cg.drawString("Paused", (float) (biWidth / 2 - b.getWidth() / 2), (float) (biHeight / 2));
-        } else if (gameStatus.getGameStatus() == GameMapImpl.GameStatus.GAME_OVER) {
+        } else if (gameStatus.getGameStatus() == GameStatus.GAME_OVER) {
             cg.setColor(gameStatus.getTick() % 80 < 40 ? Color.RED : new Color(150, 0, 0));
             cg.setFont(new Font("Monospaced", Font.PLAIN, 108));
             Rectangle2D b = cg.getFontMetrics().getStringBounds("GAME OVER", cg);

@@ -6,6 +6,7 @@ import Objects.ControlType;
 import Objects.Explosion;
 import Objects.GameMap;
 import Objects.GameObject;
+import Objects.GameStatus;
 import Objects.MapBounds;
 import Objects.Missile;
 import Objects.Point;
@@ -33,10 +34,10 @@ public class GameMapImpl implements Serializable, GameMap {
     private final MapBounds mapBounds = new MapBounds(0, 1200, 0, 1600);
     public final static double MAP_BOUNDS_PADDING = 50;
 
-    private volatile GameStatus gameStatus = GameStatus.RUNNING;
-
+    private volatile GameStatus gameStatus;
     private final Random random = new Random();
-    private volatile int tick;
+    private volatile long tick;
+    private volatile long gameOverTick;
     private final Raptor raptor;
     private final Set<ControlType> controls = EnumSet.noneOf(ControlType.class);
     private final Set<Missile> missiles = new HashSet<>();
@@ -157,8 +158,9 @@ public class GameMapImpl implements Serializable, GameMap {
             explosions.remove(removeExplosion);
         });
 
-        if (!raptor.isAlive()) {
+        if (!raptor.isAlive() && gameStatus != GameStatus.GAME_OVER) {
             gameStatus = GameStatus.GAME_OVER;
+            gameOverTick = tick;
         }
 
         tick++;
@@ -254,8 +256,12 @@ public class GameMapImpl implements Serializable, GameMap {
         return mapBounds;
     }
 
-    public enum GameStatus {
-        RUNNING, PAUSED, GAME_OVER
+    @Override
+    public Long getGameOverTick() {
+        if (gameStatus == GameStatus.GAME_OVER) {
+            return gameOverTick;
+        }
+        return null;
     }
 
     @Override

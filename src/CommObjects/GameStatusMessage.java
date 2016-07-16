@@ -5,8 +5,8 @@
  */
 package CommObjects;
 
-import Engine.GameMapImpl;
 import Objects.GameObject;
+import Objects.GameStatus;
 import java.util.List;
 
 /**
@@ -17,9 +17,9 @@ public class GameStatusMessage extends Message {
 
     private final long tick;
     private final List<GameObject> gameObjects;
-    private final GameMapImpl.GameStatus gameStatus;
+    private final GameStatus gameStatus;
 
-    public GameStatusMessage(long tick, List<GameObject> gameObjects, GameMapImpl.GameStatus gameStatus) {
+    public GameStatusMessage(long tick, List<GameObject> gameObjects, GameStatus gameStatus) {
         this.tick = tick;
         this.gameObjects = gameObjects;
         this.gameStatus = gameStatus;
@@ -38,7 +38,7 @@ public class GameStatusMessage extends Message {
         return "GameStatusMessage{" + "tick=" + tick + ", gameObjects=" + gameObjects + '}';
     }
 
-    public GameMapImpl.GameStatus getGameStatus() {
+    public GameStatus getGameStatus() {
         return gameStatus;
     }
 

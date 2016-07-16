@@ -11,6 +11,7 @@ import CommObjects.LoginMessage;
 import CommObjects.UserStatsMessage;
 import Engine.GameMapImpl;
 import Objects.GameMap;
+import Objects.GameStatus;
 import Objects.Raptor;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -152,14 +153,13 @@ public class RaptorCloneServer implements Runnable {
                             }
                         }, "Server-Listener-" + clientId).start();
 
-                        while (true) {
+                        while (game.getGameStatus() != GameStatus.GAME_OVER || game.getGameOverTick() + 1000 > game.getTick()) {
                             game.nextRound();
                             GameStatusMessage message = game.getStatus();
                             oos.writeObject(message);
                             oos.reset();
                             Thread.sleep(20 - (System.currentTimeMillis() % 20));
                         }
-
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     } catch (InterruptedException ex) {

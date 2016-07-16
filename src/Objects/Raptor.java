@@ -5,7 +5,6 @@
  */
 package Objects;
 
-import Engine.GameMapImpl;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
@@ -75,7 +74,7 @@ public class Raptor extends GameObject {
         for (ControlType control : controls) {
             switch (control) {
                 case FIRE:
-                    if (gameMap.getGameStatus() == GameMapImpl.GameStatus.GAME_OVER) {
+                    if (gameMap.getGameStatus() == GameStatus.GAME_OVER) {
                         break;
                     }
 
@@ -111,7 +110,7 @@ public class Raptor extends GameObject {
             }
         }
 
-        if (gameMap.getGameStatus() == GameMapImpl.GameStatus.GAME_OVER) {
+        if (gameMap.getGameStatus() == GameStatus.GAME_OVER) {
             getPosition().add(0, SPEED / 2);
             if (tick % 15 == 0) {
                 double dir = Math.random() * Math.PI * 2;
