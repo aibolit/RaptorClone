@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import raptorclone.Configurations;
 
 /**
  *
@@ -105,21 +106,23 @@ public class GameMapImpl implements Serializable, GameMap {
                 message = "WARNING!!!\nMeta Puzzles Not Solved\nShip is breaking apart";
             }
 
-            if (tick > 1500 && tick % 50 == 0) {
-                explosions.add(raptor.dismantle(this));
-            }
+            if (gameStatus != GameStatus.GAME_OVER) {
+                if (tick > 1500 && tick % 50 == 0) {
+                    explosions.add(raptor.dismantle(this));
+                }
 
-            if (tick == 1450) {
-                message = "Commander, the ship...\nShe is breaking apart";
-                gameStatus = GameStatus.WAITING;
-            }
-            if (tick == 1600) {
-                message = "We need to go back\nand solve the metas...";
-                gameStatus = GameStatus.WAITING;
-            }
-            if (tick == 1800) {
-                message = "Abort Captian, ABORT";
-                gameStatus = GameStatus.WAITING;
+                if (tick == 1450) {
+                    message = "Commander, the ship...\nShe is breaking apart";
+                    gameStatus = GameStatus.WAITING;
+                }
+                if (tick == 1600) {
+                    message = "We need to go back\nand solve the metas...";
+                    gameStatus = GameStatus.WAITING;
+                }
+                if (tick == 1800) {
+                    message = "Abort Captian, ABORT";
+                    gameStatus = GameStatus.WAITING;
+                }
             }
         }
         if (tick > 100 && tick % 300 == 0 && tick < 3200) {
@@ -178,6 +181,10 @@ public class GameMapImpl implements Serializable, GameMap {
                     explosions.add(missile.getExplosion(this));
                     removeMissiles.add(missile);
                     if (!ship.modifyHp(-missile.getDamage() * Math.pow(2, raptor.getSubsystemLevel(Raptor.RaptorSubsystem.WEAPON_POWER) - Raptor.RaptorSubsystem.WEAPON_POWER.getMaxLevel()))) {
+                        if (ship.isBoss()) {
+                            message = "Commander... We have recieved\na message\n" + Configurations.getPuzzleAnswer();
+                            gameStatus = GameStatus.WAITING;
+                        }
                         removeShips.add(ship);
                         break;
                     }
