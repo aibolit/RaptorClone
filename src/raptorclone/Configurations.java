@@ -25,6 +25,9 @@ public class Configurations {
     private static String host = "127.0.0.1";
     private static String puzzleAnswer = "Octopus Decoy";
     private static String dbUrl = "";
+    private static String user = "", password = "";
+    private static boolean saveLocal = false;
+    private static String aspectRatio = "1200x1600";
 
     private static final List<Image> shipImages = new ArrayList<>();
 
@@ -71,6 +74,46 @@ public class Configurations {
         return dbUrl;
     }
 
+    public static String getUser() {
+        return user;
+    }
+
+    public static String getPassword() {
+        return password;
+    }
+
+    public static void setUser(String user) {
+        Configurations.user = user;
+    }
+
+    public static void setPassword(String password) {
+        Configurations.password = password;
+    }
+
+    public static boolean isSaveLocal() {
+        return saveLocal;
+    }
+
+    public static void setSaveLocal(boolean saveLocal) {
+        Configurations.saveLocal = saveLocal;
+    }
+
+    public static boolean isInited() {
+        return inited;
+    }
+
+    public static void setInited(boolean inited) {
+        Configurations.inited = inited;
+    }
+
+    public static String getAspectRatio() {
+        return aspectRatio;
+    }
+
+    public static void setAspectRatio(String aspectRatio) {
+        Configurations.aspectRatio = aspectRatio;
+    }
+
     public static void readCongfigs(String file) throws IOException {
         if (!inited) {
             init();
@@ -101,6 +144,30 @@ public class Configurations {
                             puzzleAnswer += st.nextToken();
                         }
                         break;
+                    case "user":
+                        user = "";
+                        while (st.hasMoreTokens()) {
+                            if (user.length() > 0) {
+                                user += " ";
+                            }
+                            user += st.nextToken();
+                        }
+                        break;
+                    case "password":
+                        password = "";
+                        while (st.hasMoreTokens()) {
+                            if (password.length() > 0) {
+                                password += " ";
+                            }
+                            password += st.nextToken();
+                        }
+                        break;
+                    case "save-local":
+                        saveLocal = Boolean.parseBoolean(st.nextToken());
+                        break;
+                    case "aspect-ratio":
+                        aspectRatio = st.nextToken();
+                        break;
                     default:
                         if (line.charAt(0) != '#') {
                             System.out.println("Oops no such setting " + line);
@@ -111,15 +178,23 @@ public class Configurations {
         }
     }
 
-    public static void saveConfigurations(String file) throws IOException {
-        try (PrintWriter pw = new PrintWriter(new File(file))) {
-            pw.print(getConfigString());
+    public static void saveLocalConfigurations() throws IOException {
+        try (PrintWriter pw = new PrintWriter(new File("local.cfg"))) {
+            pw.print(getLocalConfigString());
         }
     }
 
-    public static String getConfigString() {
+    public static String getLocalConfigString() {
         StringBuilder out = new StringBuilder();
-        out.append("port ").append(port).append("\nhost ").append(host).append("\n");
+        out.append("user ")
+                .append(user)
+                .append("\npassword ")
+                .append(password)
+                .append("\nsave-local ")
+                .append(saveLocal)
+                .append("\naspect-ratio ")
+                .append(aspectRatio)
+                .append("\n");
         return out.toString();
     }
 

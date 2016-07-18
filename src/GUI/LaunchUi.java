@@ -127,6 +127,8 @@ public class LaunchUi extends javax.swing.JFrame {
         saveCredentialsButton = new javax.swing.JCheckBox();
         userEntry = new javax.swing.JTextField();
         passwordEntry = new javax.swing.JPasswordField();
+        jLabel3 = new javax.swing.JLabel();
+        aspectRatioCombo = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         statusLabel = new javax.swing.JLabel();
         launchGameButton = new javax.swing.JButton();
@@ -180,7 +182,17 @@ public class LaunchUi extends javax.swing.JFrame {
         });
 
         saveCredentialsButton.setBackground(new java.awt.Color(255, 255, 255));
+        saveCredentialsButton.setSelected(true);
         saveCredentialsButton.setText("Save Credentials");
+
+        userEntry.setText(Configurations.getUser());
+
+        passwordEntry.setText(Configurations.getPassword());
+
+        jLabel3.setText("Size");
+
+        aspectRatioCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1200x1600", "900x1200", "600x800" }));
+        aspectRatioCombo.setSelectedItem(Configurations.getAspectRatio());
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -192,17 +204,17 @@ public class LaunchUi extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(loginButton))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(saveCredentialsButton)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(saveCredentialsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel2))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(aspectRatioCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(userEntry)
-                            .addComponent(passwordEntry))))
+                            .addComponent(passwordEntry, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -217,10 +229,14 @@ public class LaunchUi extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(passwordEntry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(aspectRatioCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(saveCredentialsButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(loginButton)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -409,11 +425,11 @@ public class LaunchUi extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -433,6 +449,14 @@ public class LaunchUi extends javax.swing.JFrame {
         loginButton.setEnabled(false);
         statusLabel.setText("Logging in...");
         statusLabel.setForeground(Color.BLACK);
+        final String user = userEntry.getText();
+        final String password = new String(passwordEntry.getPassword());
+        final boolean isSave = saveCredentialsButton.isSelected();
+        String aspectRatio = (String) aspectRatioCombo.getSelectedItem();
+        String[] ar = aspectRatio.split("x");
+        final int width = Integer.parseInt(ar[0]);
+        final int height = Integer.parseInt(ar[1]);
+
         new Thread(() -> {
             try {
                 final Socket socket = new Socket(Configurations.getHost(), Configurations.getPort());
@@ -441,12 +465,20 @@ public class LaunchUi extends javax.swing.JFrame {
                         final ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
 
                     clientOutput = oos;
-                    oos.writeObject(new LoginMessage(userEntry.getText(), new String(passwordEntry.getPassword())));
+                    oos.writeObject(new LoginMessage(user, password));
                     UserStatsMessage status = (UserStatsMessage) ois.readObject();
                     setSubsystemsStatus(status.getSubsystems());
 
+                    Configurations.setUser(user);
+                    Configurations.setPassword(password);
+                    Configurations.setSaveLocal(isSave);
+                    Configurations.setAspectRatio(aspectRatio);
+                    if (saveCredentialsButton.isSelected()) {
+                        Configurations.saveLocalConfigurations();
+                    }
+
                     java.awt.EventQueue.invokeAndWait(() -> {
-                        raptorUi = new RaptorUi();
+                        raptorUi = new RaptorUi(width, height);
                         raptorUi.connectStreams(ois, oos);
                         launchGameButton.setEnabled(true);
                     });
@@ -541,6 +573,7 @@ public class LaunchUi extends javax.swing.JFrame {
     private final Map<Raptor.RaptorSubsystem, JLabel> subsystemWidgets = new EnumMap(Raptor.RaptorSubsystem.class);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> aspectRatioCombo;
     private javax.swing.JLabel hullHealthStatus;
     private javax.swing.JLabel hullRadarStatus;
     private javax.swing.JLabel hullShieldsStatus;
@@ -553,6 +586,7 @@ public class LaunchUi extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

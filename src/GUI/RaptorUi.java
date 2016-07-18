@@ -29,6 +29,7 @@ import static Objects.Ship.ShipType.TYPE_V;
 import static Objects.Ship.ShipType.TYPE_X;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -68,16 +69,14 @@ public class RaptorUi extends javax.swing.JFrame {
     private final Random random = new Random();
     private final Map<Long, List<ExplosionParticle>> explosions = new HashMap<>();
     private final MapBounds mapBounds = new MapBounds(0, 1200, 0, 1600);
+    private final int width, height;
 
     /**
      * Creates new form RaptorUi
      */
-//    public RaptorUi() {
-//        initComponents();
-//        initArt();
-//        initConnection();
-//    }
-    public RaptorUi() {
+    public RaptorUi(int width, int height) {
+        this.width = width;
+        this.height = height;
         initComponents();
         initArt();
     }
@@ -376,7 +375,7 @@ public class RaptorUi extends javax.swing.JFrame {
         canvas = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1200, 1600));
+        setPreferredSize(new Dimension(width, height));
         setResizable(false);
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -559,7 +558,7 @@ public class RaptorUi extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new RaptorUi().setVisible(true);
+            new RaptorUi(1200, 1600).setVisible(true);
         });
     }
 

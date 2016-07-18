@@ -32,7 +32,7 @@ public class Raptor extends GameObject {
         //CUSTOM
     }
 
-    public int getSubsystemLevel(RaptorSubsystem subsystem) {
+    public final int getSubsystemLevel(RaptorSubsystem subsystem) {
         return subsystems.getOrDefault(subsystem, 0);
     }
 

@@ -28,6 +28,7 @@ public class RaptorClone {
         try {
             Configurations.readCongfigs("settings.cfg");
             Configurations.readCongfigs("private.cfg");
+            Configurations.readCongfigs("local.cfg");
         } catch (IOException ex) {
             System.out.println("Warning: Could not read configuration file; reverting to defaults");
         }
