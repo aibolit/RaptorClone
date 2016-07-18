@@ -28,5 +28,5 @@ package Objects;
  * @author Aleks
  */
 public enum GameStatus {
-    RUNNING, PAUSED, GAME_OVER
+    RUNNING, PAUSED, GAME_OVER, WAITING
 }

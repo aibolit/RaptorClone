@@ -46,6 +46,7 @@ public class GameMapImpl implements Serializable, GameMap {
     private final Set<Ship> ships = new HashSet<>();
     private final Set<Swarm> swarms = new HashSet<>();
     private final Set<Explosion> explosions = new HashSet<>();
+    private volatile String message;
 
     public GameMapImpl(Map<Raptor.RaptorSubsystem, Integer> subsystems) {
         gameStatus = GameStatus.PAUSED;
@@ -57,13 +58,18 @@ public class GameMapImpl implements Serializable, GameMap {
     public synchronized void registerControlMessage(ControlMessage controlMessage) {
         switch (controlMessage.getControl()) {
             case PAUSE:
-                if (gameStatus == GameStatus.GAME_OVER) {
+                if (gameStatus == GameStatus.GAME_OVER || gameStatus == GameStatus.WAITING) {
                     break;
                 }
                 if (gameStatus != GameStatus.PAUSED) {
                     gameStatus = GameStatus.PAUSED;
                 } else {
                     gameStatus = raptor.isAlive() ? GameStatus.RUNNING : GameStatus.GAME_OVER;
+                }
+                break;
+            case SKIP:
+                if (gameStatus == GameStatus.WAITING) {
+                    gameStatus = GameStatus.RUNNING;
                 }
                 break;
             default:
@@ -76,19 +82,31 @@ public class GameMapImpl implements Serializable, GameMap {
         }
     }
 
-    @Override
-    public synchronized void nextRound() {
-        if (gameStatus == GameStatus.PAUSED) {
-            return;
+    private synchronized void nextStoryRound() {
+        if (tick == 50) {
+            message = "Welcome Commander,\nGet ready to take the controls... ";
+            gameStatus = GameStatus.WAITING;
+        } else if (tick == 51) {
+            message = "Use the arrow keys to move\nand Ctrl to shoot.";
+            gameStatus = GameStatus.WAITING;
         }
-
-        final List<Missile> removeMissiles = new ArrayList<>();
-        final List<Ship> removeShips = new ArrayList<>();
-        final List<Explosion> removeExplosions = new ArrayList<Explosion>();
 
         if (tick > 100 && tick % 300 == 0) {
             swarms.add(Swarm.random(tick));
         }
+
+    }
+
+    @Override
+    public synchronized void nextRound() {
+        if (gameStatus == GameStatus.PAUSED || gameStatus == GameStatus.WAITING) {
+            return;
+        }
+        message = null;
+
+        final List<Missile> removeMissiles = new ArrayList<>();
+        final List<Ship> removeShips = new ArrayList<>();
+        final List<Explosion> removeExplosions = new ArrayList<>();
 
         for (Iterator<Swarm> it = swarms.iterator(); it.hasNext();) {
             Swarm swarm = it.next();
@@ -242,7 +260,7 @@ public class GameMapImpl implements Serializable, GameMap {
             }).collect(Collectors.toList());
         }
 
-        GameStatusMessage stat = new GameStatusMessage(tick, gameObects, gameStatus);
+        GameStatusMessage stat = new GameStatusMessage(tick, gameObects, gameStatus, message);
         return stat;
     }
 

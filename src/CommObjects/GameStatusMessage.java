@@ -18,11 +18,13 @@ public class GameStatusMessage extends Message {
     private final long tick;
     private final List<GameObject> gameObjects;
     private final GameStatus gameStatus;
+    private final String message;
 
-    public GameStatusMessage(long tick, List<GameObject> gameObjects, GameStatus gameStatus) {
+    public GameStatusMessage(long tick, List<GameObject> gameObjects, GameStatus gameStatus, String message) {
         this.tick = tick;
         this.gameObjects = gameObjects;
         this.gameStatus = gameStatus;
+        this.message = message;
     }
 
     public long getTick() {
@@ -42,4 +44,7 @@ public class GameStatusMessage extends Message {
         return gameStatus;
     }
 
+    public String getMessage() {
+        return message;
+    }
 }

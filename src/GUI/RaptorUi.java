@@ -71,6 +71,8 @@ public class RaptorUi extends javax.swing.JFrame {
     private final MapBounds mapBounds = new MapBounds(0, 1200, 0, 1600);
     private final int width, height;
 
+    private static final Color DARK_BLUE = new Color(0, 25, 50);
+
     /**
      * Creates new form RaptorUi
      */
@@ -328,6 +330,23 @@ public class RaptorUi extends javax.swing.JFrame {
             }
         }
 
+        //MESSAGE BOX
+        if (gameStatus.getMessage() != null) {
+            cg.setColor(DARK_BLUE);
+            cg.fillRect(50, 1350, 1100, 200);
+            cg.setColor(Color.ORANGE);
+            cg.setStroke(new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            cg.drawRect(50, 1350, 1100, 200);
+            cg.setFont(new Font("Monospaced", Font.BOLD, 48));
+            int i = 0;
+            for (String line : gameStatus.getMessage().split("\n")) {
+                cg.drawString(line, 75, 1400 + (48 * i++));
+            }
+            if (gameStatus.getGameStatus() == GameStatus.WAITING) {
+                cg.setFont(new Font("Monospaced", Font.BOLD, 32));
+                cg.drawString("Space to continue...", 430, 1535);
+            }
+        }
         //OVERLAY TEXT
         if (gameStatus.getGameStatus() == GameStatus.PAUSED) {
             cg.setColor(Color.ORANGE);
@@ -433,6 +452,9 @@ public class RaptorUi extends javax.swing.JFrame {
                 break;
             case KeyEvent.VK_P:
                 sendMessage(new ControlMessage(ControlType.PAUSE, true));
+                break;
+            case KeyEvent.VK_SPACE:
+                sendMessage(new ControlMessage(ControlType.SKIP, true));
                 break;
             case KeyEvent.VK_D:
                 debugOn = !debugOn;
