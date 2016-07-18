@@ -22,7 +22,7 @@ public class Raptor extends GameObject {
     private int hp;
     private double shield;
 
-    private final double SPEED = 8, SHEILD_REGEN = 0.01;
+    private final double SPEED = 8, SHEILD_REGEN = 0.007;
     private double horizontalSkid = 0, verticalSkid = 0;
 
     public Raptor(Point position, Map<RaptorSubsystem, Integer> subsystems) {
@@ -167,7 +167,8 @@ public class Raptor extends GameObject {
                 verticalSkid = -verticalSkid;
             }
         }
-        shield = Math.min(shield + SHEILD_REGEN * Math.pow(getSubsystemRatio(RaptorSubsystem.HULL_SHEILD), 2), 1);
+
+        shield = Math.min(shield + SHEILD_REGEN * Math.pow(getSubsystemRatio(RaptorSubsystem.HULL_SHEILD) * (controls.contains(ControlType.FIRE) ? 1 : 1.2), 2), 1);
     }
 
     @Override

@@ -89,7 +89,11 @@ public class GameMapImpl implements Serializable, GameMap {
             message = "Welcome Commander,\nGet ready to take the controls... ";
             gameStatus = GameStatus.WAITING;
         } else if (tick == 36) {
-            message = "Use the arrow keys to move\nand Ctrl to shoot.";
+            if (System.getProperty("os.name").contains("Mac")) {
+                message = "Use the arrow keys to move\nand Cmd to shoot.";
+            } else {
+                message = "Use the arrow keys to move\nand Ctrl to shoot.";
+            }
             gameStatus = GameStatus.WAITING;
         }
 

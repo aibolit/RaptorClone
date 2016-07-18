@@ -30,6 +30,7 @@ import CommObjects.UserStatsMessage;
 import Objects.ControlType;
 import Objects.GameStatus;
 import Objects.Raptor;
+import com.sun.glass.events.KeyEvent;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -449,6 +450,11 @@ public class LaunchUi extends javax.swing.JFrame {
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         loginButton.setEnabled(false);
+        userEntry.setEnabled(false);
+        passwordEntry.setEnabled(false);
+        saveCredentialsButton.setEnabled(false);
+        aspectRatioCombo.setEnabled(false);
+
         statusLabel.setText("Logging in...");
         statusLabel.setForeground(Color.BLACK);
         final String user = userEntry.getText();
@@ -480,9 +486,10 @@ public class LaunchUi extends javax.swing.JFrame {
                     }
 
                     java.awt.EventQueue.invokeAndWait(() -> {
+                        launchGameButton.setEnabled(true);
+
                         raptorUi = new RaptorUi(width, height);
                         raptorUi.connectStreams(ois, oos);
-                        launchGameButton.setEnabled(true);
                     });
                     socket.setSoTimeout(2000);
 
@@ -504,7 +511,7 @@ public class LaunchUi extends javax.swing.JFrame {
                                     }, "Client-FrameBuffer").start();
 
                                     new Thread(() -> {
-                                        while (true) {
+                                        while (!socket.isClosed() && socket.isConnected()) {
                                             try {
                                                 java.awt.EventQueue.invokeAndWait(() -> {
                                                     try {
@@ -539,6 +546,11 @@ public class LaunchUi extends javax.swing.JFrame {
             } catch (IOException | InterruptedException | ClassNotFoundException | InvocationTargetException ex) {
                 java.awt.EventQueue.invokeLater(() -> {
                     loginButton.setEnabled(true);
+                    userEntry.setEnabled(true);
+                    passwordEntry.setEnabled(true);
+                    saveCredentialsButton.setEnabled(true);
+                    aspectRatioCombo.setEnabled(true);
+
                     statusLabel.setForeground(Color.RED);
                     statusLabel.setText("Invalid Credentials, Commander.");
                 });
