@@ -91,8 +91,24 @@ public class Ship extends GameObject {
             case TYPE_B:
                 double speed = 4;
                 if (age % 300 < 200 && age % 20 == 0) {
-                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-4, 5), Missile.MissileType.FIREBALL, Math.PI / 2));
-                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(4, 5), Missile.MissileType.FIREBALL, Math.PI / 2));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-4, 50), Missile.MissileType.FIREBALL, Math.PI / 2));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(4, 50), Missile.MissileType.FIREBALL, Math.PI / 2));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-25, 50), Missile.MissileType.FIREBALL, Math.PI / 2));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(25, 50), Missile.MissileType.FIREBALL, Math.PI / 2));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-30, 50), Missile.MissileType.FIREBALL, Math.PI / 8 * 5));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(30, 50), Missile.MissileType.FIREBALL, Math.PI / 8 * 3));
+
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-35, 50), Missile.MissileType.FIREBALL, Math.PI / 4 * 3));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(35, 50), Missile.MissileType.FIREBALL, Math.PI / 4));
+
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(0, -20), Missile.MissileType.FIREBALL, Math.PI / 16 + getPosition().directionTo(gameMap.getRaptor().getPosition())));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(0, -20), Missile.MissileType.FIREBALL, -1 * Math.PI / 16 + getPosition().directionTo(gameMap.getRaptor().getPosition())));
+
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-20, 0), Missile.MissileType.FIREBALL, getPosition().directionTo(gameMap.getRaptor().getPosition())));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(20, 0), Missile.MissileType.FIREBALL, getPosition().directionTo(gameMap.getRaptor().getPosition())));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-30, 0), Missile.MissileType.FIREBALL, getPosition().directionTo(gameMap.getRaptor().getPosition())));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(30, 0), Missile.MissileType.FIREBALL, getPosition().directionTo(gameMap.getRaptor().getPosition())));
+
                 }
                 if (shipPoint == null) {
                     if (getPosition().getY() > 600) {

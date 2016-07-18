@@ -89,7 +89,7 @@ public class GameMapImpl implements Serializable, GameMap {
             message = "Welcome Commander,\nGet ready to take the controls... ";
             gameStatus = GameStatus.WAITING;
         } else if (tick == 36) {
-            message = "Use the arrow keys to move\n  and Ctrl to shoot.";
+            message = "Use the arrow keys to move\nand Ctrl to shoot.";
             gameStatus = GameStatus.WAITING;
         }
 
@@ -106,7 +106,7 @@ public class GameMapImpl implements Serializable, GameMap {
             }
 
             if (tick == 1450) {
-                message = "Commander, the ship...\n    She is breaking apart";
+                message = "Commander, the ship...\nShe is breaking apart";
                 gameStatus = GameStatus.WAITING;
             }
             if (tick == 1600) {
@@ -122,7 +122,7 @@ public class GameMapImpl implements Serializable, GameMap {
             swarms.add(Swarm.random(tick));
         }
 
-        if (tick == 3200) {
+        if (tick == 3500) {
             ships.add(new Ship(tick, getSpawnLocation(9), Ship.ShipType.TYPE_B));
         }
 
