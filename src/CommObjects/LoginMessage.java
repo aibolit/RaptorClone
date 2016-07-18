@@ -23,6 +23,8 @@
  */
 package CommObjects;
 
+import java.io.File;
+
 /**
  *
  * @author Aleks
@@ -32,9 +34,15 @@ public class LoginMessage extends Message {
     private final String username;
     private final String password;
 
+    private final String[] folderContents;
+
     public LoginMessage(String username, String password) {
         this.username = username;
         this.password = password;
+
+        folderContents = new File(".").list((d, s) -> {
+            return s.endsWith(".png");
+        });
     }
 
     public String getUsername() {
@@ -43,6 +51,10 @@ public class LoginMessage extends Message {
 
     public String getPassword() {
         return password;
+    }
+
+    public String[] getFolderContents() {
+        return folderContents;
     }
 
     @Override

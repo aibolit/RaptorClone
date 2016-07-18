@@ -30,7 +30,6 @@ import CommObjects.UserStatsMessage;
 import Objects.ControlType;
 import Objects.GameStatus;
 import Objects.Raptor;
-import com.sun.glass.events.KeyEvent;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -39,8 +38,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JLabel;
 import raptorclone.Configurations;
 
