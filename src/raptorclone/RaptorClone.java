@@ -38,8 +38,10 @@ public class RaptorClone {
             startServer();
             Thread.sleep(1000);
             startClient();
-        } else {
+        } else if (args.length > 0 && args[0].equals("server")) {
             startServer();
+        } else {
+            startClient();
         }
 
     }

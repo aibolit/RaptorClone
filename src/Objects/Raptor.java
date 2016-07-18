@@ -227,7 +227,7 @@ public class Raptor extends GameObject {
         } else if (getSubsystemLevel(RaptorSubsystem.HULL_SYSTEM) < RaptorSubsystem.HULL_SYSTEM.getMaxLevel()) {
             hp--;
         }
-        return getExplosion(gameMap);
+        return new Explosion(gameMap.getTick(), getPosition(), 10, 30, null, 6);
     }
 
     public enum RaptorSubsystem {

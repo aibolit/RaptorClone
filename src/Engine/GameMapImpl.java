@@ -104,12 +104,25 @@ public class GameMapImpl implements Serializable, GameMap {
             if (tick > 1500 && tick % 50 == 0) {
                 explosions.add(raptor.dismantle(this));
             }
+
+            if (tick == 1450) {
+                message = "Commander, the ship...\n    She is breaking apart";
+                gameStatus = GameStatus.WAITING;
+            }
+            if (tick == 1600) {
+                message = "We need to go back\nand solve the metas...";
+                gameStatus = GameStatus.WAITING;
+            }
+            if (tick == 1800) {
+                message = "Abort Captian, ABORT";
+                gameStatus = GameStatus.WAITING;
+            }
         }
-        if (tick > 100 && tick % 300 == 0) {
+        if (tick > 100 && tick % 300 == 0 && tick < 3200) {
             swarms.add(Swarm.random(tick));
         }
 
-        if (tick == 1000) {
+        if (tick == 3200) {
             ships.add(new Ship(tick, getSpawnLocation(9), Ship.ShipType.TYPE_B));
         }
 

@@ -144,6 +144,7 @@ public class RaptorUi extends javax.swing.JFrame {
         }
 
         Raptor raptor = null;
+        Ship boss = null;
 
         for (GameObject gameObject : status.getGameObjects()) {
             if (gameObject instanceof Raptor) {
@@ -156,6 +157,9 @@ public class RaptorUi extends javax.swing.JFrame {
                 Ship ship = (Ship) gameObject;
                 double radius = ship.getRadius();
                 int width = (int) (radius * 2.2), height = (int) (radius * 2.2);
+                if (ship.isBoss()) {
+                    boss = ship;
+                }
                 switch (ship.getShipType()) {
                     case TYPE_U: {
                         Image i = Configurations.getPlayerImage(4);
@@ -329,6 +333,12 @@ public class RaptorUi extends javax.swing.JFrame {
                     cg.setColor(Color.WHITE);
                     cg.drawRect(40, 80, (int) (200 * raptor.getShield()), 30);
                 }
+            }
+            if (boss != null) {
+                cg.setColor(Color.RED);
+                cg.fillRect(150, 1500, 900, 50);
+                cg.setColor(Color.GREEN);
+                cg.fillRect(150, 1500, (int) (900.0 * boss.getHp() / boss.getMaxHp()), 50);
             }
         }
 
