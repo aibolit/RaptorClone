@@ -74,7 +74,6 @@ public class RaptorCloneServer implements Runnable {
     private Map<Raptor.RaptorSubsystem, Integer> verifyLogin(LoginMessage loginMessage) {
         try {
             URL url = new URL(Configurations.getDbUrl().replace("%USERNAME%", loginMessage.getUsername()).replace("%PASSWORD%", loginMessage.getPassword()));
-            url = new URL(Configurations.getDbUrl().replace("%USERNAME%", "dryrun2").replace("%PASSWORD%", "dryrun2_glhf"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
@@ -90,7 +89,7 @@ public class RaptorCloneServer implements Runnable {
                     if (kv.length != 2) {
                         continue;
                     }
-                    if (!keys.contains(kv[0]) && subsystemCodesMap.containsKey(kv[0]) && kv[1].trim().equals("Y")) {
+                    if (!keys.contains(kv[0]) && subsystemCodesMap.containsKey(kv[0]) && (kv[1].trim().equals("Y") || kv[1].trim().equals("S"))) {
                         Raptor.RaptorSubsystem subsystem = subsystemCodesMap.get(kv[0]);
                         subsystems.put(subsystem, subsystems.getOrDefault(subsystem, 0) + 1);
                         keys.add(kv[0]);
@@ -153,7 +152,8 @@ public class RaptorCloneServer implements Runnable {
                             }
                         }, "Server-Listener-" + clientId).start();
 
-                        while (game.getGameStatus() != GameStatus.GAME_OVER || game.getGameOverTick() + 1000 > game.getTick()) {
+                        socket.setSoTimeout(2000);
+                        while (game.getGameStatus() != GameStatus.GAME_OVER || game.getGameOverTick() + 500 > game.getTick()) {
                             game.nextRound();
                             GameStatusMessage message = game.getStatus();
                             oos.writeObject(message);

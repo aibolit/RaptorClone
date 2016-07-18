@@ -57,6 +57,8 @@ public class GameMapImpl implements Serializable, GameMap {
     @Override
     public synchronized void registerControlMessage(ControlMessage controlMessage) {
         switch (controlMessage.getControl()) {
+            case HEARTBEAT:
+                break;
             case PAUSE:
                 if (gameStatus == GameStatus.GAME_OVER || gameStatus == GameStatus.WAITING) {
                     break;
@@ -91,13 +93,26 @@ public class GameMapImpl implements Serializable, GameMap {
             gameStatus = GameStatus.WAITING;
         }
 
-        if (tick < 300 && tick > 50) {
-            message = "WARNING!!!\nMeta Puzzles Not Solved\nShip is breaking apart";
-        }
+        if (raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_SYSTEM) < Raptor.RaptorSubsystem.HULL_SYSTEM.getMaxLevel()
+                || raptor.getSubsystemLevel(Raptor.RaptorSubsystem.MOVE_SYSTEM) < Raptor.RaptorSubsystem.MOVE_SYSTEM.getMaxLevel()
+                || raptor.getSubsystemLevel(Raptor.RaptorSubsystem.WEAPON_SYSTEM) < Raptor.RaptorSubsystem.WEAPON_SYSTEM.getMaxLevel()) {
 
+            if (tick < 300 && tick > 50) {
+                message = "WARNING!!!\nMeta Puzzles Not Solved\nShip is breaking apart";
+            }
+
+            if (tick > 1500 && tick % 50 == 0) {
+                explosions.add(raptor.dismantle(this));
+            }
+        }
         if (tick > 100 && tick % 300 == 0) {
             swarms.add(Swarm.random(tick));
         }
+
+        if (tick == 1000) {
+            ships.add(new Ship(tick, getSpawnLocation(9), Ship.ShipType.TYPE_B));
+        }
+
     }
 
     @Override
@@ -153,7 +168,9 @@ public class GameMapImpl implements Serializable, GameMap {
             }
 
             if (ship.overlapsWith(raptor)) {
-                removeShips.add(ship);
+                if (!ship.isBoss()) {
+                    removeShips.add(ship);
+                }
                 raptor.takeDamage();
                 raptor.takeDamage();
             }

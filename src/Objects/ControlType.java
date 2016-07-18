@@ -10,5 +10,5 @@ package Objects;
  * @author Aleks
  */
 public enum ControlType {
-    UP, DOWN, LEFT, RIGHT, FIRE, PAUSE, SKIP
+    UP, DOWN, LEFT, RIGHT, FIRE, PAUSE, SKIP, HEARTBEAT
 }

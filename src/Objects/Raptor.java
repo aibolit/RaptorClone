@@ -5,7 +5,9 @@
  */
 package Objects;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -171,6 +173,61 @@ public class Raptor extends GameObject {
     @Override
     public Explosion getExplosion(GameMap gameMap) {
         return new Explosion(gameMap.getTick(), getPosition(), 1, 15, null, 15);
+    }
+
+    public Explosion dismantle(GameMap gameMap) {
+        List<RaptorSubsystem> contestedSubsystems = new ArrayList<>();
+        if (getSubsystemLevel(RaptorSubsystem.HULL_SYSTEM) < RaptorSubsystem.HULL_SYSTEM.getMaxLevel()) {
+            if (getSubsystemLevel(RaptorSubsystem.HULL_SHEILD) > 0) {
+                contestedSubsystems.add(RaptorSubsystem.HULL_SHEILD);
+            }
+            if (getSubsystemLevel(RaptorSubsystem.HULL_RADAR) > 0) {
+                contestedSubsystems.add(RaptorSubsystem.HULL_RADAR);
+            }
+            if (getSubsystemLevel(RaptorSubsystem.HULL_HEALTH) > 0) {
+                contestedSubsystems.add(RaptorSubsystem.HULL_HEALTH);
+            }
+        }
+        if (getSubsystemLevel(RaptorSubsystem.WEAPON_SYSTEM) < RaptorSubsystem.WEAPON_SYSTEM.getMaxLevel()) {
+            if (getSubsystemLevel(RaptorSubsystem.WEAPON_POWER) > 0) {
+                contestedSubsystems.add(RaptorSubsystem.WEAPON_POWER);
+            }
+            if (getSubsystemLevel(RaptorSubsystem.WEAPON_SPEED) > 0) {
+                contestedSubsystems.add(RaptorSubsystem.WEAPON_SPEED);
+            }
+            if (getSubsystemLevel(RaptorSubsystem.WEAPON_TYPES) > 0) {
+                contestedSubsystems.add(RaptorSubsystem.WEAPON_TYPES);
+            }
+        }
+        if (getSubsystemLevel(RaptorSubsystem.MOVE_SYSTEM) < RaptorSubsystem.MOVE_SYSTEM.getMaxLevel()) {
+            if (getSubsystemLevel(RaptorSubsystem.MOVE_HORIZONTAL) > 0) {
+                contestedSubsystems.add(RaptorSubsystem.MOVE_HORIZONTAL);
+            }
+            if (getSubsystemLevel(RaptorSubsystem.MOVE_VERTICAL) > 0) {
+                contestedSubsystems.add(RaptorSubsystem.MOVE_VERTICAL);
+            }
+            if (getSubsystemLevel(RaptorSubsystem.MOVE_BRAKE) > 0) {
+                contestedSubsystems.add(RaptorSubsystem.MOVE_BRAKE);
+            }
+        }
+        if (contestedSubsystems.size() > 0) {
+            RaptorSubsystem subsystem = contestedSubsystems.get((int) (Math.random() * contestedSubsystems.size()));
+            subsystems.put(subsystem, subsystems.get(subsystem) - 1);
+            switch (subsystem) {
+                case HULL_HEALTH:
+                    if (hp > 0) {
+                        hp--;
+                    }
+                    break;
+                case HULL_SHEILD:
+                    shield = 0;
+                    break;
+            }
+
+        } else if (getSubsystemLevel(RaptorSubsystem.HULL_SYSTEM) < RaptorSubsystem.HULL_SYSTEM.getMaxLevel()) {
+            hp--;
+        }
+        return getExplosion(gameMap);
     }
 
     public enum RaptorSubsystem {

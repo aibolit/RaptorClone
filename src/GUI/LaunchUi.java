@@ -38,6 +38,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import raptorclone.Configurations;
 
@@ -482,6 +484,7 @@ public class LaunchUi extends javax.swing.JFrame {
                         raptorUi.connectStreams(ois, oos);
                         launchGameButton.setEnabled(true);
                     });
+                    socket.setSoTimeout(2000);
 
                     boolean isGameOver = false;
                     boolean inited = false;
@@ -499,7 +502,27 @@ public class LaunchUi extends javax.swing.JFrame {
                                             raptorUi.drawFrame();
                                         }
                                     }, "Client-FrameBuffer").start();
+
+                                    new Thread(() -> {
+                                        while (true) {
+                                            try {
+                                                java.awt.EventQueue.invokeAndWait(() -> {
+                                                    try {
+                                                        oos.writeObject(new ControlMessage(ControlType.HEARTBEAT, false));
+                                                    } catch (IOException ex) {
+                                                        ex.printStackTrace();
+                                                    }
+                                                });
+                                                Thread.sleep(200);
+                                            } catch (InterruptedException ex) {
+                                                ex.printStackTrace();
+                                            } catch (InvocationTargetException ex) {
+                                                ex.printStackTrace();
+                                            }
+                                        }
+                                    }, "Client-Heartbeat").start();
                                     inited = true;
+
                                 }
                             }
                         }
@@ -570,7 +593,7 @@ public class LaunchUi extends javax.swing.JFrame {
     RaptorUi raptorUi;
     private ObjectOutputStream clientOutput;
 
-    private final Map<Raptor.RaptorSubsystem, JLabel> subsystemWidgets = new EnumMap(Raptor.RaptorSubsystem.class);
+    private final Map<Raptor.RaptorSubsystem, JLabel> subsystemWidgets = new EnumMap<>(Raptor.RaptorSubsystem.class);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> aspectRatioCombo;

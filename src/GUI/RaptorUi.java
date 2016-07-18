@@ -69,7 +69,7 @@ public class RaptorUi extends javax.swing.JFrame {
     private final Random random = new Random();
     private final Map<Long, List<ExplosionParticle>> explosions = new HashMap<>();
     private final MapBounds mapBounds = new MapBounds(0, 1200, 0, 1600);
-    private final int width, height;
+    private final int gameWidth, gameHeight;
 
     private static final Color DARK_BLUE = new Color(0, 25, 50);
 
@@ -77,8 +77,8 @@ public class RaptorUi extends javax.swing.JFrame {
      * Creates new form RaptorUi
      */
     public RaptorUi(int width, int height) {
-        this.width = width;
-        this.height = height;
+        this.gameWidth = width;
+        this.gameHeight = height;
         initComponents();
         initArt();
     }
@@ -154,34 +154,36 @@ public class RaptorUi extends javax.swing.JFrame {
                 //cg.drawImage(i, (int) (gameObject.getPosition().getX() - i.getWidth(null) / 2), (int) (gameObject.getPosition().getY() - i.getHeight(null) / 2), null);
             } else if (gameObject instanceof Ship) {
                 Ship ship = (Ship) gameObject;
+                double radius = ship.getRadius();
+                int width = (int) (radius * 2.2), height = (int) (radius * 2.2);
                 switch (ship.getShipType()) {
                     case TYPE_U: {
                         Image i = Configurations.getPlayerImage(4);
-                        int width = 60, height = 50;
                         cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
                     }
                     break;
                     case TYPE_X: {
-                        Image i = Configurations.getPlayerImage(15);
-                        int width = 60, height = 50;
+                        Image i = Configurations.getPlayerImage(16);
                         cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
                     }
                     break;
                     case TYPE_V: {
                         Image i = Configurations.getPlayerImage(23);
-                        int width = 60, height = 50;
                         cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
                     }
                     break;
                     case TYPE_K: {
                         Image i = Configurations.getPlayerImage(8);
-                        int width = 60, height = 50;
                         cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
                     }
                     break;
                     case TYPE_H: {
                         Image i = Configurations.getPlayerImage(17);
-                        int width = 60, height = 50;
+                        cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
+                    }
+                    break;
+                    case TYPE_B: {
+                        Image i = Configurations.getPlayerImage(15);
                         cg.drawImage(i, (int) (gameObject.getPosition().getX() - width / 2), (int) (gameObject.getPosition().getY() - height / 2), width, height, null);
                     }
                     break;
@@ -394,7 +396,7 @@ public class RaptorUi extends javax.swing.JFrame {
         canvas = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(width, height));
+        setPreferredSize(new Dimension(gameWidth, gameHeight));
         setResizable(false);
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {

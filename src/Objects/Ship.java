@@ -88,6 +88,26 @@ public class Ship extends GameObject {
                 }
             }
             break;
+            case TYPE_B:
+                double speed = 4;
+                if ((age / 200) % 200 < 120 && age % 20 == 0) {
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-4, 5), Missile.MissileType.FIREBALL, Math.PI / 2));
+                    gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(4, 5), Missile.MissileType.FIREBALL, Math.PI / 2));
+                }
+                if (shipPoint == null) {
+                    if (getPosition().getY() > 600) {
+                        getPosition().add(0, speed);
+                    } else {
+                        shipPoint = gameMap.getRandomLocation(4, 3);
+                        getPosition().add(getPosition().directionTowards(shipPoint).multiply(speed));
+                    }
+                } else if (getPosition().distanceTo(shipPoint) < speed * 2.5) {
+                    shipPoint = gameMap.getRandomLocation(4, 3);
+                    getPosition().add(getPosition().directionTowards(shipPoint).multiply(speed));
+                } else {
+                    getPosition().add(getPosition().directionTowards(shipPoint).multiply(speed));
+                }
+                break;
             default:
                 throw new AssertionError();
         }
@@ -111,18 +131,25 @@ public class Ship extends GameObject {
         return new Explosion(gameMap.getTick(), getPosition(), 10, 40, null, 30);
     }
 
-    public enum ShipType {
-        TYPE_U(20, 25),
-        TYPE_V(15, 25),
-        TYPE_X(10, 15),
-        TYPE_K(85, 30),
-        TYPE_H(7, 20),;
+    public boolean isBoss() {
+        return shipType.isBoss();
+    }
 
-        private ShipType(double hp, double radius) {
+    public enum ShipType {
+        TYPE_U(25, 35, false),
+        TYPE_V(20, 45, false),
+        TYPE_X(10, 25, false),
+        TYPE_K(85, 30, false),
+        TYPE_H(7, 40, false),
+        TYPE_B(1500, 150, true),;
+
+        private ShipType(double hp, double radius, boolean boss) {
             this.hp = hp;
             this.radius = radius;
+            this.boss = boss;
         }
 
+        private final boolean boss;
         private final double hp;
         private final double radius;
 
@@ -132,6 +159,10 @@ public class Ship extends GameObject {
 
         public double getRadius() {
             return radius;
+        }
+
+        public boolean isBoss() {
+            return boss;
         }
 
         @Override
