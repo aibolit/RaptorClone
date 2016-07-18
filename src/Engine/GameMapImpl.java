@@ -83,18 +83,21 @@ public class GameMapImpl implements Serializable, GameMap {
     }
 
     private synchronized void nextStoryRound() {
-        if (tick == 50) {
+        if (tick == 35) {
             message = "Welcome Commander,\nGet ready to take the controls... ";
             gameStatus = GameStatus.WAITING;
-        } else if (tick == 51) {
-            message = "Use the arrow keys to move\nand Ctrl to shoot.";
+        } else if (tick == 36) {
+            message = "Use the arrow keys to move\n  and Ctrl to shoot.";
             gameStatus = GameStatus.WAITING;
+        }
+
+        if (tick < 300 && tick > 50) {
+            message = "WARNING!!!\nMeta Puzzles Not Solved\nShip is breaking apart";
         }
 
         if (tick > 100 && tick % 300 == 0) {
             swarms.add(Swarm.random(tick));
         }
-
     }
 
     @Override
@@ -103,6 +106,8 @@ public class GameMapImpl implements Serializable, GameMap {
             return;
         }
         message = null;
+
+        nextStoryRound();
 
         final List<Missile> removeMissiles = new ArrayList<>();
         final List<Ship> removeShips = new ArrayList<>();
