@@ -180,7 +180,7 @@ public class GameMapImpl implements Serializable, GameMap {
                 if (ship.overlapsWith(missile)) {
                     explosions.add(missile.getExplosion(this));
                     removeMissiles.add(missile);
-                    if (!ship.modifyHp(-missile.getDamage() * Math.pow(2, raptor.getSubsystemLevel(Raptor.RaptorSubsystem.WEAPON_POWER) - Raptor.RaptorSubsystem.WEAPON_POWER.getMaxLevel()))) {
+                    if (!ship.modifyHp(-missile.getDamage() * (raptor.getSubsystemLevel(Raptor.RaptorSubsystem.WEAPON_POWER) + 1) / (Raptor.RaptorSubsystem.WEAPON_POWER.getMaxLevel() + 1))) {
                         if (ship.isBoss()) {
                             message = "Commander... We have recieved\na message\n" + Configurations.getPuzzleAnswer();
                             gameStatus = GameStatus.WAITING;
@@ -298,11 +298,8 @@ public class GameMapImpl implements Serializable, GameMap {
         gameObects.addAll(explosions);
 
         if (raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR) != Raptor.RaptorSubsystem.HULL_RADAR.getMaxLevel()) {
-            int ticksLen = 300;
-            double ratio = Math.pow(2.0, raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR) - Raptor.RaptorSubsystem.HULL_RADAR.getMaxLevel());
-            //1.0 * (1 + raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR)) / (1 + Raptor.RaptorSubsystem.HULL_RADAR.getMaxLevel());
             gameObects = gameObects.stream().filter((o) -> {
-                return (tick + o.hashCode()) % ticksLen < ((int) ticksLen * ratio) || o.equals(raptor);
+                return raptor.distanceTo(o) < 400 + 200 * raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR);
             }).collect(Collectors.toList());
         }
 

@@ -168,7 +168,7 @@ public class Raptor extends GameObject {
             }
         }
 
-        shield = Math.min(shield + SHEILD_REGEN * Math.pow(getSubsystemRatio(RaptorSubsystem.HULL_SHEILD) * (controls.contains(ControlType.FIRE) ? 1 : 1.2), 2), 1);
+        shield = Math.min(shield + SHEILD_REGEN * Math.pow(getSubsystemRatio(RaptorSubsystem.HULL_SHEILD) * (controls.contains(ControlType.FIRE) ? 1 : 1.5), 2), 1);
     }
 
     @Override

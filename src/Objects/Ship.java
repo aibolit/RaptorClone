@@ -82,7 +82,7 @@ public class Ship extends GameObject {
             }
             break;
             case TYPE_H: {
-                getPosition().add(variation * 8, 16);
+                getPosition().add(variation * (7 + 2 * Math.random()), 16);
                 if (age % 60 == 15) {
                     gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(0, 5), Missile.MissileType.FIREBALL, Math.PI / 2));
                 }
@@ -161,7 +161,7 @@ public class Ship extends GameObject {
         TYPE_X(10, 25, false),
         TYPE_K(85, 30, false),
         TYPE_H(7, 40, false),
-        TYPE_B(3000, 150, true),;
+        TYPE_B(1200, 150, true),;
 
         private ShipType(double hp, double radius, boolean boss) {
             this.hp = hp;

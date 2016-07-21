@@ -85,6 +85,9 @@ public class RaptorCloneServer implements Runnable {
             try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 String line;
                 while ((line = in.readLine()) != null) {
+                    if (line.contains("Error:") || line.contains("Invalid credentials")) {
+                        return null;
+                    }
                     String[] kv = line.split(":", 2);
                     if (kv.length != 2) {
                         continue;
@@ -146,7 +149,9 @@ public class RaptorCloneServer implements Runnable {
                                     }
                                 }
                             } catch (IOException ex) {
-                                ex.printStackTrace();
+                                if (game.getGameStatus() != GameStatus.GAME_OVER) {
+                                    ex.printStackTrace();
+                                }
                             } catch (ClassNotFoundException ex) {
                                 ex.printStackTrace();
                             }
