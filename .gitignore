@@ -2,4 +2,5 @@
 /build/
 /private.cfg
 /dist/
-local.cfg
+/local.cfg
+/settings.cfg

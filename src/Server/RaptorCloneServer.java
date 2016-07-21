@@ -114,6 +114,7 @@ public class RaptorCloneServer implements Runnable {
                 final Socket socket = serverSocket.accept();
 
                 final int clientId = nextClientId++;
+                socket.setSoTimeout(2000);
                 new Thread(() -> {
                     final Map<Raptor.RaptorSubsystem, Integer> subsystems = new EnumMap<>(Raptor.RaptorSubsystem.class);
 
@@ -157,7 +158,6 @@ public class RaptorCloneServer implements Runnable {
                             }
                         }, "Server-Listener-" + clientId).start();
 
-                        socket.setSoTimeout(2000);
                         while (game.getGameStatus() != GameStatus.GAME_OVER || game.getGameOverTick() + 500 > game.getTick()) {
                             game.nextRound();
                             GameStatusMessage message = game.getStatus();
