@@ -144,10 +144,6 @@ public class GameMapImpl implements Serializable, GameMap {
 
         nextStoryRound();
 
-        final List<Missile> removeMissiles = new ArrayList<>();
-        final List<Ship> removeShips = new ArrayList<>();
-        final List<Explosion> removeExplosions = new ArrayList<>();
-
         for (Iterator<Swarm> it = swarms.iterator(); it.hasNext();) {
             Swarm swarm = it.next();
             swarm.nextRound(this);
@@ -158,69 +154,86 @@ public class GameMapImpl implements Serializable, GameMap {
 
         raptor.nextRound(this);
 
-        for (Missile missile : missiles) {
+        for (Iterator<Missile> it = missiles.iterator(); it.hasNext();) {
+            Missile missile = it.next();
             missile.nextRound(this);
-
             if (isOutOfBounds(missile.getPosition(), true)) {
-                removeMissiles.add(missile);
+                if (missile.isFriendly()) {
+                    friendlyMissiles.remove(missile);
+                } else {
+                    enemyMissiles.remove(missile);
+                }
+                it.remove();
             }
         }
 
-        for (Missile missile : enemyMissiles) {
+        for (Iterator<Missile> it = enemyMissiles.iterator(); it.hasNext();) {
+            Missile missile = it.next();
             if (raptor.overlapsWith(missile)) {
                 raptor.takeDamage();
-                removeMissiles.add(missile);
+
+                explosions.add(missile.getExplosion(this));
+                missiles.remove(missile);
+                it.remove();
             }
         }
 
-        for (Ship ship : ships) {
+        shipLoop:
+        for (Iterator<Ship> jt = ships.iterator(); jt.hasNext();) {
+            Ship ship = jt.next();
+
             ship.nextRound(this);
 
-            for (Missile missile : friendlyMissiles) {
+            for (Iterator<Missile> it = friendlyMissiles.iterator(); it.hasNext();) {
+                Missile missile = it.next();
+
                 if (ship.overlapsWith(missile)) {
                     explosions.add(missile.getExplosion(this));
-                    removeMissiles.add(missile);
+
+                    it.remove();
+                    missiles.remove(missile);
+                    explosions.add(missile.getExplosion(this));
+
                     if (!ship.modifyHp(-missile.getDamage() * (raptor.getSubsystemLevel(Raptor.RaptorSubsystem.WEAPON_POWER) + 1) / (Raptor.RaptorSubsystem.WEAPON_POWER.getMaxLevel() + 1))) {
                         if (ship.isBoss()) {
                             message = "Commander... We have recieved\na message\n" + Configurations.getPuzzleAnswer();
                             gameStatus = GameStatus.WAITING;
                         }
-                        removeShips.add(ship);
-                        break;
+
+                        explosions.add(ship.getExplosion(this));
+                        jt.remove();
+                        continue shipLoop;
                     }
                 }
             }
 
             if (ship.overlapsWith(raptor)) {
+                raptor.takeDamage();
+                raptor.takeDamage();
                 if (!ship.isBoss()) {
-                    removeShips.add(ship);
+                    explosions.add(ship.getExplosion(this));
+                    jt.remove();
+                    continue;
                 }
-                raptor.takeDamage();
-                raptor.takeDamage();
             }
 
-            if (isOutOfBounds(ship.getPosition(), true) || ship.getHp() <= 0) {
-                removeShips.add(ship);
+            if (ship.getHp() <= 0) {
+                explosions.add(ship.getExplosion(this));
+                jt.remove();
+                continue;
+            }
+
+            if (isOutOfBounds(ship.getPosition(), true)) {
+                jt.remove();
             }
         }
 
-        for (Explosion explosion : explosions) {
+        for (Iterator<Explosion> it = explosions.iterator(); it.hasNext();) {
+            Explosion explosion = it.next();
             if (explosion.getCreationTick() + explosion.getDuration() <= tick) {
-                removeExplosions.add(explosion);
+                it.remove();
             }
         }
-
-        for (Ship removeShip : removeShips) {
-            explosions.add(removeShip.getExplosion(this));
-            ships.remove(removeShip);
-
-        }
-        for (Missile removeMissile : removeMissiles) {
-            removeMissile(removeMissile);
-        }
-        removeExplosions.stream().forEach((removeExplosion) -> {
-            explosions.remove(removeExplosion);
-        });
 
         if (!raptor.isAlive() && gameStatus != GameStatus.GAME_OVER) {
             gameStatus = GameStatus.GAME_OVER;
@@ -255,10 +268,12 @@ public class GameMapImpl implements Serializable, GameMap {
         }
     }
 
+    @Override
     public Point getSpawnLocation(int idx) {
         return new Point(mapBounds.getMinX() + (mapBounds.getMaxX() - mapBounds.getMinX()) / 24.0 * (2 * idx + 1), mapBounds.getMinY() - MAP_BOUNDS_PADDING);
     }
 
+    @Override
     public synchronized void addShip(Ship ship) {
         ships.add(ship);
     }
