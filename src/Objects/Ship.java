@@ -90,7 +90,7 @@ public class Ship extends GameObject {
             break;
             case TYPE_B:
                 double speed = 4;
-                if (age % 300 < 161 && age % 20 == 0) {
+                if (age % 400 < 161 && age % 20 == 0) {
                     gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-4, 50), Missile.MissileType.FIREBALL, Math.PI / 2));
                     gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(4, 50), Missile.MissileType.FIREBALL, Math.PI / 2));
                     gameMap.addMissile(new Missile(gameMap.getTick(), new Point(getPosition()).add(-25, 50), Missile.MissileType.FIREBALL, Math.PI / 2));
@@ -159,7 +159,7 @@ public class Ship extends GameObject {
         TYPE_U(25, 35, false),
         TYPE_V(20, 45, false),
         TYPE_X(10, 25, false),
-        TYPE_K(85, 30, false),
+        TYPE_K(65, 30, false),
         TYPE_H(7, 40, false),
         TYPE_B(1200, 150, true),;
 
