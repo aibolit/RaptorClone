@@ -27,10 +27,17 @@ public class RaptorClone {
         System.setProperty("sun.java2d.opengl", "true");
         try {
             Configurations.readCongfigs("settings.cfg");
+        } catch (IOException ex) {
+            System.out.println("Warning: Could not read onfiguration file; reverting to defaults");
+        }
+        try {
             Configurations.readCongfigs("private.cfg");
+        } catch (IOException ex) {
+        }
+        try {
             Configurations.readCongfigs("local.cfg");
         } catch (IOException ex) {
-            System.out.println("Warning: Could not read configuration file; reverting to defaults");
+            System.out.println("Warning: Could not read local configs file");
         }
         if (args.length > 0 && args[0].equals("client")) {
             startClient();
