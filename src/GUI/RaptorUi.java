@@ -469,6 +469,7 @@ public class RaptorUi extends javax.swing.JFrame {
                 break;
             case KeyEvent.VK_META:
             case KeyEvent.VK_CONTROL:
+            case KeyEvent.VK_SHIFT:
                 sendMessage(new ControlMessage(ControlType.FIRE, true));
                 break;
             case KeyEvent.VK_P:
@@ -501,6 +502,7 @@ public class RaptorUi extends javax.swing.JFrame {
                 break;
             case KeyEvent.VK_META:
             case KeyEvent.VK_CONTROL:
+            case KeyEvent.VK_SHIFT:
                 sendMessage(new ControlMessage(ControlType.FIRE, false));
                 break;
             default:
