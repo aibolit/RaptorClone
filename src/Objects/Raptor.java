@@ -22,7 +22,7 @@ public class Raptor extends GameObject {
     private int hp;
     private double shield;
 
-    private final double SPEED = 8, SHEILD_REGEN = 0.007;
+    private final double SPEED = 12, SHEILD_REGEN = 0.007;
     private double horizontalSkid = 0, verticalSkid = 0;
 
     public Raptor(Point position, Map<RaptorSubsystem, Integer> subsystems) {

@@ -325,7 +325,7 @@ public class RaptorUi extends javax.swing.JFrame {
                 float[] phase = {20.0f, 100.0f};
                 cg.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, phase, 0));
                 cg.setColor(Color.GRAY);
-                double radius = (400 + 200 * raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR));
+                double radius = (600 + 300 * raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR));
                 cg.drawOval((int) (raptor.getPosition().getX() - radius), (int) (raptor.getPosition().getY() - radius), (int) radius * 2, (int) radius * 2);
             }
 

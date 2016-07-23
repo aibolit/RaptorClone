@@ -310,7 +310,7 @@ public class GameMapImpl implements Serializable, GameMap {
 
         if (raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR) != Raptor.RaptorSubsystem.HULL_RADAR.getMaxLevel()) {
             gameObects = gameObects.stream().filter((o) -> {
-                return raptor.distanceTo(o) < 400 + 200 * raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR);
+                return raptor.distanceTo(o) < 600 + 300 * raptor.getSubsystemLevel(Raptor.RaptorSubsystem.HULL_RADAR);
             }).collect(Collectors.toList());
         }
 
