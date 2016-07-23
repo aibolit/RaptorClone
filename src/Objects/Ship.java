@@ -156,10 +156,10 @@ public class Ship extends GameObject {
     }
 
     public enum ShipType {
-        TYPE_U(25, 35, false),
-        TYPE_V(20, 45, false),
+        TYPE_U(20, 35, false),
+        TYPE_V(15, 45, false),
         TYPE_X(10, 25, false),
-        TYPE_K(65, 30, false),
+        TYPE_K(25, 30, false),
         TYPE_H(7, 40, false),
         TYPE_B(1200, 150, true),;
 
